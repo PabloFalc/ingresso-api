@@ -1,0 +1,9 @@
+name: Pull request test pipeline
+
+run-name: ${{github.actor}} is using a ${{github.workflow}} on branch ${{github.ref}}
+
+on: [pull_request]
+
+jobs:
+  call-tests:
+    uses: ./.github/workflows/tests.yml

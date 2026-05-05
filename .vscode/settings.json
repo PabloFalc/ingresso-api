@@ -1,0 +1,41 @@
+{
+  "workbench.iconTheme": "symbols",
+  "symbols.files.associations": {
+    "*.module.ts": "nest",
+    "*.controller.ts": "nest-controller",
+    "*.service.ts": "nest-service",
+    "*.repository.ts": "nest-decorator",
+    "*.pipe.ts": "nest-guard",
+    "*.error.ts": "nest",
+    "*.errors.ts": "nest",
+    "*.filter.ts": "nest",
+    "*.middleware.ts,": "nest-middleware",
+    "*.interceptor.ts": "nest-controller",
+    "*.decorator.ts": "nest-decorator",
+    "*.guard.ts": "nest-guard",
+    "*.health.ts": "nest-service"
+  },
+
+  "symbols.folders.associations": {
+    "infra": "folder-app",
+    "cache": "folder-layout",
+    "plugins": "folder-blue",
+    "erros": "folder-red",
+    "guards": "folder-green-outline",
+    "decorators": "folder-context",
+    "filters": "folder-red-outline",
+
+    "redis": "folder-redis",
+    "redis-providers": "folder-redis",
+
+    "drizzle": "folder-drizzle",
+    "drizzle-providers": "folder-drizzle"
+  },
+
+  // "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // "[typescript]": {
+  //   "editor.defaultFormatter": "esbenp.prettier-vscode"
+  // },
+  "prettier.tabWidth": 2,
+  "editor.tabSize": 2
+}
