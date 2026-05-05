@@ -1,7 +1,7 @@
 import { pgTable } from 'drizzle-orm/pg-core';
 import { uuidv7 } from 'uuidv7';
 
-export const address = pgTable('adress', (t) => ({
+export const address = pgTable('address', (t) => ({
   id: t
     .text('adress_id')
     .primaryKey()

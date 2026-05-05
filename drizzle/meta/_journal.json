@@ -8,6 +8,20 @@
       "when": 1777759581007,
       "tag": "0000_salty_nocturne",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778008617548,
+      "tag": "0001_cultured_skaar",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778008758111,
+      "tag": "0002_new_blacklash",
+      "breakpoints": true
     }
   ]
 }

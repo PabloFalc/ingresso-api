@@ -5,6 +5,8 @@ import { timestamps } from '../shared/timestamps';
 import { sessions } from './sessions.table';
 import { accounts } from '../better-auth/accounts.table';
 import { z } from 'zod';
+import { tickets } from '../ticket.table';
+import { orders } from '../order.table';
 
 export const userRolesEnum = pgEnum('user_roles', [
   'OWNER',
@@ -44,4 +46,6 @@ export type UserEntity = typeof users.$inferSelect;
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
+  tickets: many(tickets),
+  oders: many(orders),
 }));
