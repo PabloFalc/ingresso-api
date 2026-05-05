@@ -1,6 +1,7 @@
 import {
   applyDecorators,
   HttpCode,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { getOrCreateDto } from './helpers/get-create-dto-cache';
 import { ZodResponseInterceptor } from 'src/core/interceptors/zod-response.interceptor';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 
 export type DocumentedParams = {
   summary?: string;
@@ -75,6 +77,7 @@ export function Documented(params: DocumentedParams) {
 
   if (security?.cookie) {
     decorators.push(ApiCookieAuth('cookie'));
+    decorators.push(UseGuards(AuthGuard));
   }
   if (security?.bearer) {
     decorators.push(ApiBearerAuth('bearer'));
