@@ -8,6 +8,9 @@ export const findUserById: DocumentedParams = {
   summary: 'FindByid',
   statusCode: 200,
   description: 'Encontra um usuário pelo id',
+  security: {
+    cookie: true,
+  },
   response: {
     200: userBaseSchema,
     404: httpReplySchema,
@@ -18,6 +21,9 @@ export const updateUserById: DocumentedParams = {
   summary: 'UpdateById',
   statusCode: 200,
   description: 'Atualiza os dados de um usuário pelo id',
+  security: {
+    cookie: true,
+  },
   body: userUpdateSchema,
   response: {
     200: userBaseSchema,
@@ -30,6 +36,9 @@ export const findAllUsers: DocumentedParams = {
   summary: 'FindAll',
   query: usersQuerySchema,
   statusCode: 200,
+  security: {
+    cookie: true,
+  },
   description: 'Retorna todos os usuário com paginação',
   response: {
     200: z.array(userBaseSchema),

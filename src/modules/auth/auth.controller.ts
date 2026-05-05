@@ -2,8 +2,8 @@ import { Controller, Get, Post } from '@nestjs/common';
 import { Documented } from 'src/core/decorators/documented/route-doc.decorator';
 import {
   authGetSession,
-  authRefresh,
   authSignIn,
+  authSignOut,
   authSignUp,
 } from './schemas/auth-doc.schema';
 
@@ -20,9 +20,9 @@ export class AuthController {
   @Post('sign-in/email')
   async login() {}
 
-  @Documented(authRefresh)
-  @Post('refresh')
-  async refresh() {}
+  @Documented(authSignOut)
+  @Post('sign-out')
+  async signOut() {}
 
   @Documented(authGetSession)
   @Get('get-session')
