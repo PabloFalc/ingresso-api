@@ -1,13 +1,14 @@
-import { timestampsSchemas } from 'src/core/shared/schemas/timestamps.schema';
+import { zDatetime } from 'src/core/shared/schemas/datetime.schema';
 import { z } from 'zod';
 
 export const userBaseSchema = z.object({
   id: z.uuidv7(),
-  userName: z.string().min(3).max(50).nonempty(),
+  cpf: z.string().min(11).max(14).nonempty(),
   name: z.string().max(255).min(3).nonempty(),
   email: z.email(),
   emailVerified: z.boolean(),
-  ...timestampsSchemas.shape,
+  createdAt: zDatetime,
+  updatedAt: zDatetime.nullable(),
 });
 
 export const userUpdateSchema = userBaseSchema.omit({
@@ -15,7 +16,6 @@ export const userUpdateSchema = userBaseSchema.omit({
   emailVerified: true,
   createdAt: true,
   updatedAt: true,
-  deletedAt: true,
 });
 
 export type UserUpdate = z.infer<typeof userUpdateSchema>;

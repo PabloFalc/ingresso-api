@@ -1,29 +1,29 @@
 import { pgTable } from 'drizzle-orm/pg-core';
 import { uuidv7 } from 'uuidv7';
-import { events } from './event.table';
+import { eventos } from './event.table';
 import { relations } from 'drizzle-orm';
 
-export const ticketOrders = pgTable('ticket_orders', (t) => ({
+export const tipoIngresso = pgTable('tipo_ingresso', (t) => ({
   id: t
     .text('id')
     .$defaultFn(() => uuidv7())
     .primaryKey(),
-  eventId: t
-    .text('eventId')
-    .references(() => events.id)
+  eventoId: t
+    .text('eventoId')
+    .references(() => eventos.id)
     .notNull(),
-  name: t.varchar('name', { length: 150 }).notNull(),
-  price: t.integer('price').notNull().default(0),
-  QunatityTotal: t.integer('total').notNull(),
-  QuantitySold: t.integer('soldTotal').notNull(),
-  saleStart: t.timestamp('saleStart').notNull(),
-  saleEnd: t.timestamp('saleEnd').notNull(),
-  isActive: t.boolean('isActive').notNull(),
+  nome: t.varchar('nome', { length: 150 }).notNull(),
+  preco: t.integer('preco').notNull().default(0),
+  quantidadeTotal: t.integer('total').notNull(),
+  quantidadeVendida: t.integer('quantidadeVendida').notNull(),
+  inicoVenda: t.timestamp('inicioVenda').notNull(),
+  fimVenda: t.timestamp('fimVenda').notNull(),
+  ativo: t.boolean('ativo').notNull(),
 }));
 
-export const ticketOrdersRelations = relations(ticketOrders, ({ one }) => ({
-  event: one(events, {
-    fields: [ticketOrders.eventId],
-    references: [events.id],
+export const tipoIngressoRelations = relations(tipoIngresso, ({ one }) => ({
+  event: one(eventos, {
+    fields: [tipoIngresso.eventoId],
+    references: [eventos.id],
   }),
 }));

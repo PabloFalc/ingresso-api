@@ -1,51 +1,51 @@
 import { pgTable } from 'drizzle-orm/pg-core';
 import { uuidv7 } from 'uuidv7';
-import { orders } from './order.table';
-import { events } from './event.table';
+import { pedidos } from './order.table';
+import { eventos } from './event.table';
 import { users } from './better-auth/users.table';
 import { pgEnum } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-export const ticketStatus = pgEnum('ticket_status', [
+export const ingressoStatus = pgEnum('ingresso_status', [
   'VALIDO',
   'USADO',
   'CANCELADO',
 ]);
 
-export const tickets = pgTable('tickets', (t) => ({
+export const ingressos = pgTable('ingressos', (t) => ({
   id: t
     .text('id')
     .$defaultFn(() => uuidv7())
     .primaryKey(),
-  orderId: t
-    .text('orderId')
-    .references(() => orders.id)
+  pedidoId: t
+    .text('pedidoId')
+    .references(() => pedidos.id)
     .notNull(),
-  eventId: t
-    .text('eventId')
-    .references(() => events.id)
+  eventoId: t
+    .text('eventoId')
+    .references(() => eventos.id)
     .notNull(),
   userId: t
     .text('userId')
     .references(() => users.id)
     .notNull(),
-  status: ticketStatus('status').default('VALIDO').notNull(),
-  createdAt: t.timestamp('created_at').notNull().defaultNow(),
+  status: ingressoStatus('status').default('VALIDO').notNull(),
+  criadoEm: t.timestamp('criadoEm').notNull().defaultNow(),
 }));
 
-export const ticketRelations = relations(tickets, ({ one }) => ({
-  order: one(orders, {
-    fields: [tickets.orderId],
-    references: [orders.id],
+export const ticketRelations = relations(ingressos, ({ one }) => ({
+  pedido: one(pedidos, {
+    fields: [ingressos.pedidoId],
+    references: [pedidos.id],
   }),
 
-  event: one(events, {
-    fields: [tickets.eventId],
-    references: [events.id],
+  event: one(eventos, {
+    fields: [ingressos.eventoId],
+    references: [eventos.id],
   }),
 
   user: one(users, {
-    fields: [tickets.userId],
+    fields: [ingressos.userId],
     references: [users.id],
   }),
 }));
