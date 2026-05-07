@@ -1,7 +1,7 @@
 import { pgTable, pgEnum } from 'drizzle-orm/pg-core';
 import { uuidv7 } from 'uuidv7';
 import { users } from './better-auth/users.table';
-import { timestamps } from './shared/timestamps';
+import { timestampIso } from './shared/timestamps';
 import { relations } from 'drizzle-orm';
 import { pedidoItens } from './order-items.table';
 
@@ -17,12 +17,21 @@ export const pedidos = pgTable('pedidos', (t) => ({
     .$defaultFn(() => uuidv7())
     .primaryKey(),
   userId: t
-    .text('userId')
+    .text('user_id')
     .references(() => users.id)
     .notNull(),
-  quantidadeTotal: t.integer().notNull().default(1),
+  quantidadeTotal: t.integer('quantidade_total').notNull().default(1),
   status: pedidoStatus('status').default('PENDENTE').notNull(),
-  ...timestamps,
+  criadoEm: timestampIso('criado_em', {
+    mode: 'string',
+    withTimezone: false,
+  })
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  atualizadoEm: timestampIso('atualizado_em', {
+    mode: 'string',
+    withTimezone: false,
+  }).$onUpdate(() => new Date().toISOString()),
 }));
 
 export const pedidosRelations = relations(pedidos, ({ one, many }) => ({

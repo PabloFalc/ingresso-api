@@ -2,7 +2,12 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { db } from 'src/infra/database/drizzle-client';
-import { users, sessions, accounts } from 'src/infra/database/schemas';
+import {
+  users,
+  sessions,
+  accounts,
+  ingressos,
+} from 'src/infra/database/schemas';
 import { tipoIngresso } from 'src/infra/database/schemas/ticket-order.table';
 import { pedidos } from 'src/infra/database/schemas/order.table';
 import { pedidoItens } from 'src/infra/database/schemas/order-items.table';
@@ -16,6 +21,7 @@ import type {
   CreateTicketType,
   TicketType,
 } from 'src/modules/ticket/dtos/ticket-type.schema';
+import { createEventPeriod } from './helpers/now-period';
 
 const testUser: SignUp = {
   name: 'Organizador E2E',
@@ -28,6 +34,7 @@ async function cleanup(email: string) {
   const user = await db.query.users.findFirst({
     where: eq(users.email, email),
   });
+
   if (!user) return;
 
   const eventosDoUser = await db
@@ -41,6 +48,8 @@ async function cleanup(email: string) {
       .from(tipoIngresso)
       .where(eq(tipoIngresso.eventoId, evento.id));
 
+    const pedidosIds = new Set<string>();
+
     for (const tipo of tipos) {
       const pedidosComTipo = await db
         .select({ pedidoId: pedidoItens.pedidoId })
@@ -48,10 +57,19 @@ async function cleanup(email: string) {
         .where(eq(pedidoItens.tipoIngressoId, tipo.id));
 
       for (const { pedidoId } of pedidosComTipo) {
-        await db.delete(pedidoItens).where(eq(pedidoItens.pedidoId, pedidoId));
-        await db.delete(pedidos).where(eq(pedidos.id, pedidoId));
+        pedidosIds.add(pedidoId);
       }
+    }
 
+    for (const pedidoId of pedidosIds) {
+      await db.delete(ingressos).where(eq(ingressos.pedidoId, pedidoId));
+
+      await db.delete(pedidoItens).where(eq(pedidoItens.pedidoId, pedidoId));
+
+      await db.delete(pedidos).where(eq(pedidos.id, pedidoId));
+    }
+
+    for (const tipo of tipos) {
       await db.delete(tipoIngresso).where(eq(tipoIngresso.id, tipo.id));
     }
 
@@ -59,17 +77,20 @@ async function cleanup(email: string) {
   }
 
   await db.delete(accounts).where(eq(accounts.userId, user.id));
+
   await db.delete(sessions).where(eq(sessions.userId, user.id));
+
   await db.delete(users).where(eq(users.id, user.id));
 }
 
 describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', () => {
   let app: NestFastifyApplication;
   let eventoId: string;
-  let ticketOrderId2: string;
   let ticketOrderId1: string;
-  let pedidoId1: string;
+  let ticketOrderId2: string;
+  let pedidoId: string;
   let agent: ReturnType<typeof request.agent>;
+  const period = createEventPeriod();
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -120,8 +141,8 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
     const event: CreateEvent = {
       titulo: 'Festival E2E',
       descricao: 'Evento criado pelo teste e2e',
-      dataInicio: '2026-08-01T20:00:00.000Z',
-      dataFim: '2026-08-01T23:59:00.000Z',
+      dataInicio: period.dataInicioEvento,
+      dataFim: period.dataFimEvento,
       status: 'PUBLICADO',
       local: 'Arena Fortaleza',
     };
@@ -143,8 +164,8 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
       preco: 5000,
       quantidadeTotal: 100,
       ativo: true,
-      inicioVenda: '2026-06-01T00:00:00.000Z',
-      fimVenda: '2026-07-31T23:59:00.000Z',
+      inicioVenda: period.inicioVenda,
+      fimVenda: period.fimVenda,
     };
 
     const res = await agent.post('/tickets').send(ticketType).expect(201);
@@ -162,13 +183,14 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
       preco: 15000,
       quantidadeTotal: 20,
       ativo: true,
-      inicioVenda: '2026-06-01T00:00:00.000Z',
-      fimVenda: '2026-07-31T23:59:00.000Z',
+      inicioVenda: period.inicioVenda,
+      fimVenda: period.fimVenda,
     };
 
     const res = await agent.post('/tickets').send(ticketType).expect(201);
 
     const body = res.body as TicketType;
+
     ticketOrderId2 = body.id;
     expect(ticketOrderId2).toBeDefined();
   });
@@ -176,28 +198,25 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
   // ! Criar pedidos
 
   it('6. deve criar pedido os dois tipos de ingresso', async () => {
-    const res = await agent
-      .post('/orders')
-      .send({
-        itens: [
-          { tipoIngressoId: ticketOrderId1, quantidade: 2 },
-          { tipoIngressoId: ticketOrderId2, quantidade: 1 },
-        ],
-      })
-      .expect(201);
+    const res = await agent.post('/orders').send({
+      itens: [
+        { tipoIngressoId: ticketOrderId1, quantidade: 2 },
+        { tipoIngressoId: ticketOrderId2, quantidade: 1 },
+      ],
+    });
 
     console.log(res.body);
     const body = res.body as Orders;
-    pedidoId1 = body.id;
+    pedidoId = body.id;
 
-    expect(pedidoId1).toBeDefined();
+    expect(pedidoId).toBeDefined();
     expect(body.status).toBe('PENDENTE');
   });
 
   // ! 5. Pagar os dois pedidos
 
   it('7. deve realizar o pagamento do pedido', async () => {
-    const res = await agent.post(`/orders/${pedidoId1}/pay`).expect(200);
+    const res = await agent.post(`/orders/${pedidoId}/pay`).expect(200);
     console.log(res.body);
     const body = res.body as Orders;
 

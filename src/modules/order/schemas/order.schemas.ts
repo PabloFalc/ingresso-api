@@ -10,7 +10,7 @@ export const createOrderDoc: DocumentedParams = {
   body: createOrdersBodySchema,
   security: { cookie: true },
   response: {
-    201: ordersBaseSchema.omit({ atualizadoEm: true }),
+    201: ordersBaseSchema,
     400: httpReplySchema,
   },
 };

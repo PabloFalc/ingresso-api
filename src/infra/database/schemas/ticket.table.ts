@@ -19,16 +19,15 @@ export const ingressos = pgTable('ingressos', (t) => ({
     .$defaultFn(() => uuidv7())
     .primaryKey(),
   pedidoId: t
-    .text('pedidoId')
-    .references(() => pedidos.id)
-    .notNull(),
+    .text('pedido_id')
+    .references(() => pedidos.id, { onDelete: 'set null' }),
   eventoId: t
-    .text('eventoId')
+    .text('evento_id')
     .references(() => eventos.id)
     .notNull(),
   userId: t
-    .text('userId')
-    .references(() => users.id)
+    .text('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
   status: ingressoStatus('status').default('VALIDO').notNull(),
   criadoEm: timestampIso('criadoEm')

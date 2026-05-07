@@ -36,6 +36,34 @@
       "when": 1778179890844,
       "tag": "0004_loose_kate_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778181954281,
+      "tag": "0005_common_magus",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778182285774,
+      "tag": "0006_puzzling_iceman",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1778182664854,
+      "tag": "0007_dusty_famine",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1778183042874,
+      "tag": "0008_tough_shiva",
+      "breakpoints": true
     }
   ]
 }
