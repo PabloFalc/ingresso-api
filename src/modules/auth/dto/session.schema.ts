@@ -1,12 +1,11 @@
 import z from 'zod';
-import { zDatetime } from 'src/core/shared/schemas/datetime.schema';
 import { userBaseSchema } from 'src/modules/users/dto/uses.dto';
 
 export const sessionShchema = z.object({
-  expiredAt: zDatetime,
+  expiredAt: z.iso.datetime(),
   token: z.hash('sha256'),
-  createdAt: zDatetime,
-  updatedAt: zDatetime,
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
   ipAdress: z.ipv4(),
   userAgent: z.string(),
   userId: z.uuidv7(),
@@ -19,3 +18,7 @@ export const authSchema = z
     session: sessionShchema,
   })
   .nullable();
+
+export type AuthType = z.infer<typeof authSchema>;
+
+export type SessionType = z.infer<typeof sessionShchema>;
