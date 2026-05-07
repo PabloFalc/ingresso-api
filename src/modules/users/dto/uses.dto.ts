@@ -1,4 +1,3 @@
-import { zDatetime } from 'src/core/shared/schemas/datetime.schema';
 import { z } from 'zod';
 
 export const userBaseSchema = z.object({
@@ -7,8 +6,8 @@ export const userBaseSchema = z.object({
   name: z.string().max(255).min(3).nonempty(),
   email: z.email(),
   emailVerified: z.boolean(),
-  createdAt: zDatetime,
-  updatedAt: zDatetime.nullable(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime().nullable(),
 });
 
 export const userUpdateSchema = userBaseSchema.omit({

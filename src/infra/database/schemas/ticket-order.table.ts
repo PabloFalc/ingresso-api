@@ -16,7 +16,7 @@ export const tipoIngresso = pgTable('tipo_ingresso', (t) => ({
   preco: t.integer('preco').notNull().default(0),
   quantidadeTotal: t.integer('total').notNull(),
   quantidadeVendida: t.integer('quantidadeVendida').notNull(),
-  inicoVenda: t.timestamp('inicioVenda').notNull(),
+  inicioVenda: t.timestamp('inicioVenda').notNull(),
   fimVenda: t.timestamp('fimVenda').notNull(),
   ativo: t.boolean('ativo').notNull(),
 }));

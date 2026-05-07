@@ -5,6 +5,7 @@ import { sessions } from './sessions.table';
 import { accounts } from '../better-auth/accounts.table';
 import { ingressos } from '../ticket.table';
 import { pedidos } from '../order.table';
+import { timestampIso } from '../shared/timestamps';
 
 export const users = pgTable(
   'users',
@@ -17,13 +18,16 @@ export const users = pgTable(
     name: t.varchar('name', { length: 255 }).notNull(),
     email: t.varchar('email', { length: 255 }).unique().notNull(),
     emailVerified: t.boolean('email_verified').default(false).notNull(),
-    createdAt: t.timestamp('criado_em').notNull().defaultNow(),
-    updatedAt: t
-      .timestamp('atualizado_em', {
-        mode: 'date',
-        withTimezone: true,
-      })
-      .$onUpdate(() => new Date()),
+    createdAt: timestampIso('criado_em', {
+      mode: 'string',
+      withTimezone: false,
+    })
+      .notNull()
+      .$defaultFn(() => new Date().toISOString()),
+    updatedAt: timestampIso('atualizado_em', {
+      mode: 'string',
+      withTimezone: false,
+    }).$onUpdate(() => new Date().toISOString()),
   }),
   (table) => [
     index('idx_users_name').on(table.name),

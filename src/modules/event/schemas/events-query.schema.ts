@@ -13,4 +13,4 @@ export const eventQuerySchema = z
   })
   .optional();
 
-export type eventQuery = z.infer<typeof eventQuerySchema>;
+export type EventQuery = z.infer<typeof eventQuerySchema>;

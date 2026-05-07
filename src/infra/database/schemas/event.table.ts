@@ -2,7 +2,7 @@ import { pgEnum } from 'drizzle-orm/pg-core';
 import { pgTable } from 'drizzle-orm/pg-core';
 import { uuidv7 } from 'uuidv7';
 import { users } from './better-auth/users.table';
-import { timestamps } from './shared/timestamps';
+import { timestampIso, timestamps } from './shared/timestamps';
 import { relations } from 'drizzle-orm';
 
 export const eventosStatus = pgEnum('status_evento', [
@@ -18,8 +18,8 @@ export const eventos = pgTable('eventos', (t) => ({
     .primaryKey(),
   titulo: t.varchar('titulo', { length: 150 }).notNull(),
   descricao: t.text('descricao'),
-  dataInicio: t.timestamp('data_inicio').notNull(),
-  dataFim: t.timestamp('data_fim').notNull(),
+  dataInicio: timestampIso('data_inicio').notNull(),
+  dataFim: timestampIso('data_fim').notNull(),
   status: eventosStatus('status').default('RASCUNHO'),
   local: t.varchar('local').notNull(),
   organizadorId: t
