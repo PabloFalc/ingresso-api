@@ -37,7 +37,7 @@ jobs:
 
   release:
     needs: build
-    if: github.base_ref == 'main' || github.base_ref == 'homolog'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/homolog')
     runs-on: ubuntu-latest
     permissions:
       contents: write
