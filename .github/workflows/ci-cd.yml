@@ -3,6 +3,8 @@ name: CI/CD Pipeline
 run-name: ${{github.actor}} is using a ${{github.workflow}} on branch ${{github.ref}}
 
 on:
+  push:
+    branches: [homolog, main]
   pull_request:
     branches: [homolog, main]
 
