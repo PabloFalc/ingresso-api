@@ -35,7 +35,7 @@ jobs:
 
   release:
     needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/homolog'
+    if: github.base_ref == 'main' || github.base_ref == 'homolog'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -56,7 +56,7 @@ jobs:
           cache: 'pnpm'
 
       - name: installing dependencies
-        run: pnpm install # install
+        run: pnpm install
 
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
@@ -70,4 +70,4 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm release # comando
+        run: pnpm release
