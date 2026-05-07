@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, type TestingModule } from '@nestjs/testing';
 import { EventsController } from 'src/modules/event/events.controller';
 import { EventsService } from 'src/modules/event/events.service';

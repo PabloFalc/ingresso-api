@@ -5,6 +5,7 @@ import { eventos } from './event.table';
 import { users } from './better-auth/users.table';
 import { pgEnum } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { timestampIso } from './shared/timestamps';
 
 export const ingressoStatus = pgEnum('ingresso_status', [
   'VALIDO',
@@ -30,7 +31,9 @@ export const ingressos = pgTable('ingressos', (t) => ({
     .references(() => users.id)
     .notNull(),
   status: ingressoStatus('status').default('VALIDO').notNull(),
-  criadoEm: t.timestamp('criadoEm').notNull().defaultNow(),
+  criadoEm: timestampIso('criadoEm')
+    .notNull()
+    .default(new Date().toISOString()),
 }));
 
 export const ticketRelations = relations(ingressos, ({ one }) => ({
