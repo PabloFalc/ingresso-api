@@ -11,19 +11,19 @@ export const pedidoItens = pgTable('pedido_itens', (t) => ({
     .$defaultFn(() => uuidv7())
     .primaryKey(),
   pedidoId: t
-    .text('pedidoId')
+    .text('pedido_id')
     .references(() => pedidos.id, { onDelete: 'cascade' })
     .notNull(),
   tipoIngressoId: t
-    .text('tipoIngressoId')
+    .text('tipo_ingresso_id')
     .references(() => tipoIngresso.id)
     .notNull(),
   eventoId: t
-    .text('eventoId')
+    .text('evento_id')
     .references(() => eventos.id)
     .notNull(),
   quantidade: t.integer('quantidade').notNull().default(1),
-  precoUnitario: t.integer('precoUnitario').notNull(),
+  precoUnitario: t.integer('preco_unitario').notNull(),
 }));
 
 export const pedidoItensRelations = relations(pedidoItens, ({ one }) => ({

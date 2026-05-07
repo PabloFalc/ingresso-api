@@ -23,7 +23,7 @@ export const eventos = pgTable('eventos', (t) => ({
   status: eventosStatus('status').default('RASCUNHO'),
   local: t.varchar('local').notNull(),
   organizadorId: t
-    .text('organizadorId')
+    .text('organizador_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   ...timestamps,

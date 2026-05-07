@@ -7,7 +7,7 @@ CREATE TABLE "users" (
 	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
-	"criado_em" timestamp DEFAULT now() NOT NULL,
+	"criado_em" timestamp with time zone NOT NULL,
 	"atualizado_em" timestamp with time zone,
 	CONSTRAINT "users_user_name_unique" UNIQUE("user_name"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
@@ -53,45 +53,54 @@ CREATE TABLE "verifications" (
 --> statement-breakpoint
 CREATE TABLE "ingressos" (
 	"id" text PRIMARY KEY NOT NULL,
-	"pedidoId" text NOT NULL,
-	"eventoId" text NOT NULL,
-	"userId" text NOT NULL,
+	"pedido_id" text,
+	"evento_id" text NOT NULL,
+	"user_id" text NOT NULL,
 	"status" "ingresso_status" DEFAULT 'VALIDO' NOT NULL,
-	"criadoEm" timestamp DEFAULT now() NOT NULL
+	"criadoEm" timestamp with time zone DEFAULT '2026-05-07T19:46:33.678Z' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "tipo_ingresso" (
 	"id" text PRIMARY KEY NOT NULL,
-	"eventoId" text NOT NULL,
+	"evento_id" text NOT NULL,
 	"nome" varchar(150) NOT NULL,
 	"preco" integer DEFAULT 0 NOT NULL,
-	"total" integer NOT NULL,
-	"quantidadeVendida" integer NOT NULL,
-	"inicioVenda" timestamp NOT NULL,
-	"fimVenda" timestamp NOT NULL,
+	"quantidade_total" integer NOT NULL,
+	"quantidade_vendida" integer DEFAULT 0 NOT NULL,
+	"inicio_venda" timestamp with time zone NOT NULL,
+	"fim_venda" timestamp with time zone NOT NULL,
 	"ativo" boolean NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "pedidos" (
 	"id" text PRIMARY KEY NOT NULL,
-	"userId" text NOT NULL,
-	"quantidadeTotal" integer DEFAULT 1 NOT NULL,
+	"user_id" text NOT NULL,
+	"quantidade_total" integer DEFAULT 1 NOT NULL,
 	"status" "pedido_status" DEFAULT 'PENDENTE' NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone
+	"criado_em" timestamp with time zone NOT NULL,
+	"atualizado_em" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "eventos" (
 	"id" text PRIMARY KEY NOT NULL,
 	"titulo" varchar(150) NOT NULL,
 	"descricao" text,
-	"data_inicio" timestamp NOT NULL,
-	"data_fim" timestamp NOT NULL,
+	"data_inicio" timestamp with time zone NOT NULL,
+	"data_fim" timestamp with time zone NOT NULL,
 	"status" "status_evento" DEFAULT 'RASCUNHO',
 	"local" varchar NOT NULL,
-	"organizadorId" text NOT NULL,
+	"organizador_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone
+);
+--> statement-breakpoint
+CREATE TABLE "pedido_itens" (
+	"id" text PRIMARY KEY NOT NULL,
+	"pedido_id" text NOT NULL,
+	"tipo_ingresso_id" text NOT NULL,
+	"evento_id" text NOT NULL,
+	"quantidade" integer DEFAULT 1 NOT NULL,
+	"preco_unitario" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "address" (
@@ -107,12 +116,15 @@ CREATE TABLE "address" (
 --> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "ingressos" ADD CONSTRAINT "ingressos_pedidoId_pedidos_id_fk" FOREIGN KEY ("pedidoId") REFERENCES "public"."pedidos"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "ingressos" ADD CONSTRAINT "ingressos_eventoId_eventos_id_fk" FOREIGN KEY ("eventoId") REFERENCES "public"."eventos"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "ingressos" ADD CONSTRAINT "ingressos_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tipo_ingresso" ADD CONSTRAINT "tipo_ingresso_eventoId_eventos_id_fk" FOREIGN KEY ("eventoId") REFERENCES "public"."eventos"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "pedidos" ADD CONSTRAINT "pedidos_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "eventos" ADD CONSTRAINT "eventos_organizadorId_users_id_fk" FOREIGN KEY ("organizadorId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ingressos" ADD CONSTRAINT "ingressos_pedido_id_pedidos_id_fk" FOREIGN KEY ("pedido_id") REFERENCES "public"."pedidos"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ingressos" ADD CONSTRAINT "ingressos_evento_id_eventos_id_fk" FOREIGN KEY ("evento_id") REFERENCES "public"."eventos"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ingressos" ADD CONSTRAINT "ingressos_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tipo_ingresso" ADD CONSTRAINT "tipo_ingresso_evento_id_eventos_id_fk" FOREIGN KEY ("evento_id") REFERENCES "public"."eventos"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "pedidos" ADD CONSTRAINT "pedidos_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "eventos" ADD CONSTRAINT "eventos_organizador_id_users_id_fk" FOREIGN KEY ("organizador_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "pedido_itens" ADD CONSTRAINT "pedido_itens_pedido_id_pedidos_id_fk" FOREIGN KEY ("pedido_id") REFERENCES "public"."pedidos"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "pedido_itens" ADD CONSTRAINT "pedido_itens_tipo_ingresso_id_tipo_ingresso_id_fk" FOREIGN KEY ("tipo_ingresso_id") REFERENCES "public"."tipo_ingresso"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "pedido_itens" ADD CONSTRAINT "pedido_itens_evento_id_eventos_id_fk" FOREIGN KEY ("evento_id") REFERENCES "public"."eventos"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "idx_users_name" ON "users" USING btree ("name");--> statement-breakpoint
 CREATE INDEX "users_created_at" ON "users" USING btree ("criado_em");--> statement-breakpoint
 CREATE INDEX "users_updated_at" ON "users" USING btree ("atualizado_em");--> statement-breakpoint

@@ -13,10 +13,14 @@ export const ticketTypeBaseSchema = z.object({
   ativo: z.boolean(),
 });
 
-export const createTicketTypeSchema = ticketTypeBaseSchema.omit({ id: true });
+export const createTicketTypeSchema = ticketTypeBaseSchema.omit({
+  id: true,
+  quantidadeVendida: true,
+});
 
-export const updateTicketTypeSchema = createTicketTypeSchema
+export const updateTicketTypeSchema = ticketTypeBaseSchema
   .omit({
+    id: true,
     eventoId: true,
   })
   .partial();

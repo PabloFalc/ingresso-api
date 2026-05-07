@@ -1,5 +1,5 @@
 {
-  "id": "c959fcbf-46e5-4d10-859c-d282852ad85e",
+  "id": "2538910c-99f2-4a6c-8923-8e8dfef4b97e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -41,10 +41,9 @@
         },
         "criado_em": {
           "name": "criado_em",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
         },
         "atualizado_em": {
           "name": "atualizado_em",
@@ -427,20 +426,20 @@
           "primaryKey": true,
           "notNull": true
         },
-        "pedidoId": {
-          "name": "pedidoId",
+        "pedido_id": {
+          "name": "pedido_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "evento_id": {
+          "name": "evento_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "eventoId": {
-          "name": "eventoId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "userId": {
-          "name": "userId",
+        "user_id": {
+          "name": "user_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -455,33 +454,33 @@
         },
         "criadoEm": {
           "name": "criadoEm",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
-          "default": "now()"
+          "default": "'2026-05-07T19:46:33.678Z'"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "ingressos_pedidoId_pedidos_id_fk": {
-          "name": "ingressos_pedidoId_pedidos_id_fk",
+        "ingressos_pedido_id_pedidos_id_fk": {
+          "name": "ingressos_pedido_id_pedidos_id_fk",
           "tableFrom": "ingressos",
           "tableTo": "pedidos",
           "columnsFrom": [
-            "pedidoId"
+            "pedido_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "ingressos_eventoId_eventos_id_fk": {
-          "name": "ingressos_eventoId_eventos_id_fk",
+        "ingressos_evento_id_eventos_id_fk": {
+          "name": "ingressos_evento_id_eventos_id_fk",
           "tableFrom": "ingressos",
           "tableTo": "eventos",
           "columnsFrom": [
-            "eventoId"
+            "evento_id"
           ],
           "columnsTo": [
             "id"
@@ -489,17 +488,17 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "ingressos_userId_users_id_fk": {
-          "name": "ingressos_userId_users_id_fk",
+        "ingressos_user_id_users_id_fk": {
+          "name": "ingressos_user_id_users_id_fk",
           "tableFrom": "ingressos",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -519,8 +518,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "eventoId": {
-          "name": "eventoId",
+        "evento_id": {
+          "name": "evento_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -538,27 +537,28 @@
           "notNull": true,
           "default": 0
         },
-        "total": {
-          "name": "total",
+        "quantidade_total": {
+          "name": "quantidade_total",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "quantidadeVendida": {
-          "name": "quantidadeVendida",
+        "quantidade_vendida": {
+          "name": "quantidade_vendida",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": 0
         },
-        "inicioVenda": {
-          "name": "inicioVenda",
-          "type": "timestamp",
+        "inicio_venda": {
+          "name": "inicio_venda",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },
-        "fimVenda": {
-          "name": "fimVenda",
-          "type": "timestamp",
+        "fim_venda": {
+          "name": "fim_venda",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },
@@ -571,17 +571,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "tipo_ingresso_eventoId_eventos_id_fk": {
-          "name": "tipo_ingresso_eventoId_eventos_id_fk",
+        "tipo_ingresso_evento_id_eventos_id_fk": {
+          "name": "tipo_ingresso_evento_id_eventos_id_fk",
           "tableFrom": "tipo_ingresso",
           "tableTo": "eventos",
           "columnsFrom": [
-            "eventoId"
+            "evento_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -601,14 +601,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "userId": {
-          "name": "userId",
+        "user_id": {
+          "name": "user_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "quantidadeTotal": {
-          "name": "quantidadeTotal",
+        "quantidade_total": {
+          "name": "quantidade_total",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -622,15 +622,14 @@
           "notNull": true,
           "default": "'PENDENTE'"
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
         },
-        "updated_at": {
-          "name": "updated_at",
+        "atualizado_em": {
+          "name": "atualizado_em",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
@@ -638,12 +637,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "pedidos_userId_users_id_fk": {
-          "name": "pedidos_userId_users_id_fk",
+        "pedidos_user_id_users_id_fk": {
+          "name": "pedidos_user_id_users_id_fk",
           "tableFrom": "pedidos",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -682,13 +681,13 @@
         },
         "data_inicio": {
           "name": "data_inicio",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "data_fim": {
           "name": "data_fim",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },
@@ -706,8 +705,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "organizadorId": {
-          "name": "organizadorId",
+        "organizador_id": {
+          "name": "organizador_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -728,17 +727,107 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "eventos_organizadorId_users_id_fk": {
-          "name": "eventos_organizadorId_users_id_fk",
+        "eventos_organizador_id_users_id_fk": {
+          "name": "eventos_organizador_id_users_id_fk",
           "tableFrom": "eventos",
           "tableTo": "users",
           "columnsFrom": [
-            "organizadorId"
+            "organizador_id"
           ],
           "columnsTo": [
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pedido_itens": {
+      "name": "pedido_itens",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "pedido_id": {
+          "name": "pedido_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tipo_ingresso_id": {
+          "name": "tipo_ingresso_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "evento_id": {
+          "name": "evento_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantidade": {
+          "name": "quantidade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "preco_unitario": {
+          "name": "preco_unitario",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pedido_itens_pedido_id_pedidos_id_fk": {
+          "name": "pedido_itens_pedido_id_pedidos_id_fk",
+          "tableFrom": "pedido_itens",
+          "tableTo": "pedidos",
+          "columnsFrom": [
+            "pedido_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "pedido_itens_tipo_ingresso_id_tipo_ingresso_id_fk": {
+          "name": "pedido_itens_tipo_ingresso_id_tipo_ingresso_id_fk",
+          "tableFrom": "pedido_itens",
+          "tableTo": "tipo_ingresso",
+          "columnsFrom": [
+            "tipo_ingresso_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "pedido_itens_evento_id_eventos_id_fk": {
+          "name": "pedido_itens_evento_id_eventos_id_fk",
+          "tableFrom": "pedido_itens",
+          "tableTo": "eventos",
+          "columnsFrom": [
+            "evento_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
