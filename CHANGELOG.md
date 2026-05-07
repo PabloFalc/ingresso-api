@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/PabloFalc/ingresso-api/compare/v1.0.0...v1.1.0) (2026-05-07)
+
+### 🚀 Features
+
+* **mudanca:** dsdf ([3475f73](https://github.com/PabloFalc/ingresso-api/commit/3475f736f408dd5752b75f198d28736ab13beda7))
+
 ## 1.0.0 (2026-05-07)
 
 ### 🚀 Features
