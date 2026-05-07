@@ -212,6 +212,8 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
       ],
     });
 
+    console.log('');
+
     const body = res.body as Orders;
     pedidoId = body.id;
 
