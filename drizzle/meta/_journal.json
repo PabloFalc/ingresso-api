@@ -15,6 +15,27 @@
       "when": 1778098807993,
       "tag": "0001_lazy_maria_hill",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778178736161,
+      "tag": "0002_mixed_living_tribunal",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1778178851652,
+      "tag": "0003_complete_toro",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1778179890844,
+      "tag": "0004_loose_kate_bishop",
+      "breakpoints": true
     }
   ]
 }

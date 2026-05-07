@@ -19,8 +19,6 @@ export class ZodPipe implements PipeTransform {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { error, success, data } = this.schema.safeParse(value);
 
-    console.log(`error: ${error}, data: ${data}, metadado:${metadata.type}`);
-
     if (!success)
       throw new BadRequestError({
         message: 'Validation Error',

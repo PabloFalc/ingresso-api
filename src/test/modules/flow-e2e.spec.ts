@@ -11,8 +11,11 @@ import { eq } from 'drizzle-orm';
 import type { AuthOutType, SignUp } from 'src/modules/auth/dto/auth.schema';
 import { type NestFastifyApplication } from '@nestjs/platform-fastify';
 import type { Orders } from 'src/modules/order/dtos/order.dto';
-import type { Event } from 'src/modules/event/dtos/events.dto';
-import type { TicketType } from 'src/modules/ticket/dtos/ticket-type.schema';
+import type { CreateEvent, Event } from 'src/modules/event/dtos/events.dto';
+import type {
+  CreateTicketType,
+  TicketType,
+} from 'src/modules/ticket/dtos/ticket-type.schema';
 
 const testUser: SignUp = {
   name: 'Organizador E2E',
@@ -63,10 +66,9 @@ async function cleanup(email: string) {
 describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', () => {
   let app: NestFastifyApplication;
   let eventoId: string;
-  let tipoId1: string;
-  let tipoId2: string;
+  let ticketOrderId2: string;
+  let ticketOrderId1: string;
   let pedidoId1: string;
-  let pedidoId2: string;
   let agent: ReturnType<typeof request.agent>;
 
   beforeAll(async () => {
@@ -115,17 +117,16 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
   // ! Criar evento
 
   it('3. deve criar um evento', async () => {
-    const res = await agent
-      .post('/events')
-      .send({
-        titulo: 'Festival E2E',
-        descricao: 'Evento criado pelo teste e2e',
-        dataInicio: '2026-08-01T20:00:00.000Z',
-        dataFim: '2026-08-01T23:59:00.000Z',
-        status: 'ativo',
-        local: 'Arena Fortaleza',
-      })
-      .expect(201);
+    const event: CreateEvent = {
+      titulo: 'Festival E2E',
+      descricao: 'Evento criado pelo teste e2e',
+      dataInicio: '2026-08-01T20:00:00.000Z',
+      dataFim: '2026-08-01T23:59:00.000Z',
+      status: 'PUBLICADO',
+      local: 'Arena Fortaleza',
+    };
+
+    const res = await agent.post('/events').send(event).expect(201);
     const body = res.body as Event;
 
     eventoId = body.id;
@@ -136,52 +137,56 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
   // ! Criar os tipos de ingresso
 
   it('4. deve criar o tipo de ingresso 1 (Pista)', async () => {
-    const res = await agent
-      .post('/tickets')
-      .send({
-        eventoId,
-        nome: 'Pista',
-        preco: 5000,
-        quantidadeTotal: 100,
-        ativo: true,
-        inicioVenda: '2026-06-01T00:00:00.000Z',
-        fimVenda: '2026-07-31T23:59:00.000Z',
-      })
-      .expect(201);
+    const ticketType: CreateTicketType = {
+      eventoId,
+      nome: 'Pista',
+      preco: 5000,
+      quantidadeTotal: 100,
+      ativo: true,
+      inicioVenda: '2026-06-01T00:00:00.000Z',
+      fimVenda: '2026-07-31T23:59:00.000Z',
+    };
+
+    const res = await agent.post('/tickets').send(ticketType).expect(201);
 
     const body = res.body as TicketType;
-    tipoId1 = body.id;
+    ticketOrderId1 = body.id;
 
-    expect(tipoId1).toBeDefined();
+    expect(ticketOrderId1).toBeDefined();
   });
 
   it('5. deve criar o tipo de ingresso 2 (VIP)', async () => {
-    const res = await agent
-      .post('/tickets')
-      .send({
-        eventoId,
-        nome: 'VIP',
-        preco: 15000,
-        quantidadeTotal: 20,
-        ativo: true,
-        inicioVenda: '2026-06-01T00:00:00.000Z',
-        fimVenda: '2026-07-31T23:59:00.000Z',
-      })
-      .expect(201);
+    const ticketType: CreateTicketType = {
+      eventoId,
+      nome: 'VIP',
+      preco: 15000,
+      quantidadeTotal: 20,
+      ativo: true,
+      inicioVenda: '2026-06-01T00:00:00.000Z',
+      fimVenda: '2026-07-31T23:59:00.000Z',
+    };
+
+    const res = await agent.post('/tickets').send(ticketType).expect(201);
 
     const body = res.body as TicketType;
-    tipoId2 = body.id;
-    expect(tipoId2).toBeDefined();
+    ticketOrderId2 = body.id;
+    expect(ticketOrderId2).toBeDefined();
   });
 
   // ! Criar pedidos
 
-  it('6. deve criar pedido com ingresso Pista', async () => {
+  it('6. deve criar pedido os dois tipos de ingresso', async () => {
     const res = await agent
       .post('/orders')
-      .send({ itens: [{ tipoIngressoId: tipoId1, quantidade: 2 }] })
+      .send({
+        itens: [
+          { tipoIngressoId: ticketOrderId1, quantidade: 2 },
+          { tipoIngressoId: ticketOrderId2, quantidade: 1 },
+        ],
+      })
       .expect(201);
 
+    console.log(res.body);
     const body = res.body as Orders;
     pedidoId1 = body.id;
 
@@ -189,32 +194,13 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
     expect(body.status).toBe('PENDENTE');
   });
 
-  it('7. deve criar pedido com ingresso VIP', async () => {
-    const res = await agent
-      .post('/orders')
-      .send({ itens: [{ tipoIngressoId: tipoId2, quantidade: 1 }] })
-      .expect(201);
-
-    const body = res.body as Orders;
-    pedidoId2 = body.id;
-
-    expect(pedidoId2).toBeDefined();
-    expect(body.status).toBe('PENDENTE');
-  });
-
   // ! 5. Pagar os dois pedidos
 
-  it('8. deve pagar o pedido Pista', async () => {
+  it('7. deve realizar o pagamento do pedido', async () => {
     const res = await agent.post(`/orders/${pedidoId1}/pay`).expect(200);
-
+    console.log(res.body);
     const body = res.body as Orders;
 
-    expect(body.status).toBe('PAGO');
-  });
-
-  it('9. deve pagar o pedido VIP', async () => {
-    const res = await agent.post(`/orders/${pedidoId2}/pay`).expect(200);
-    const body = res.body as Orders;
     expect(body.status).toBe('PAGO');
   });
 });

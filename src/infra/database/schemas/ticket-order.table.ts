@@ -10,13 +10,13 @@ export const tipoIngresso = pgTable('tipo_ingresso', (t) => ({
     .$defaultFn(() => uuidv7())
     .primaryKey(),
   eventoId: t
-    .text('eventoId')
+    .text('evento_id')
     .references(() => eventos.id)
     .notNull(),
   nome: t.varchar('nome', { length: 150 }).notNull(),
   preco: t.integer('preco').notNull().default(0),
-  quantidadeTotal: t.integer('total').notNull(),
-  quantidadeVendida: t.integer('quantidadeVendida').default(0).notNull(),
+  quantidadeTotal: t.integer('quantidade_total').notNull(),
+  quantidadeVendida: t.integer('quantidade_vendida').default(0).notNull(),
   inicioVenda: timestampIso('inicioVenda').notNull(),
   fimVenda: timestampIso('fimVenda').notNull(),
   ativo: t.boolean('ativo').notNull(),

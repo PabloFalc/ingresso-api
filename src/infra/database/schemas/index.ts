@@ -11,6 +11,7 @@ export * from './ticket.table';
 export * from './ticket-order.table';
 export * from './order.table';
 export * from './event.table';
+export * from './order-items.table';
 
 // ! SHARED
 export * from './shared/address.table';
