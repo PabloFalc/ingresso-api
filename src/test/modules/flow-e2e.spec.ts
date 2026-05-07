@@ -22,6 +22,8 @@ import type {
   TicketType,
 } from 'src/modules/ticket/dtos/ticket-type.schema';
 import { createEventPeriod } from './helpers/now-period';
+import type { Redis } from 'ioredis';
+import { REDIS } from 'src/infra/cache/redis.client';
 
 const testUser: SignUp = {
   name: 'Organizador E2E',
@@ -108,6 +110,11 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
   afterAll(async () => {
     await cleanup(testUser.email);
     await app.close();
+
+    const redis = app.get<Redis>(REDIS);
+
+    await redis.quit();
+    await db.$client.end();
   });
 
   // ! Cadastrar e login
@@ -205,7 +212,6 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
       ],
     });
 
-    console.log(res.body);
     const body = res.body as Orders;
     pedidoId = body.id;
 
@@ -217,7 +223,6 @@ describe('Fluxo E2E — Login → Evento → Tickets → Pedido → Pagamento', 
 
   it('7. deve realizar o pagamento do pedido', async () => {
     const res = await agent.post(`/orders/${pedidoId}/pay`).expect(200);
-    console.log(res.body);
     const body = res.body as Orders;
 
     expect(body.status).toBe('PAGO');
