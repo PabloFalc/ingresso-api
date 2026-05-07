@@ -20,6 +20,7 @@ import {
   findIngressosByEventId,
   updateEventDoc,
 } from './schemas/event-doc.schema';
+import { Session } from '@thallesp/nestjs-better-auth';
 
 @Controller({ path: 'events' })
 export class EventsController {
@@ -39,8 +40,11 @@ export class EventsController {
 
   @Documented(createEvent)
   @Post('')
-  async createEvent(@Body() body: CreateEvent) {
-    return this.service.create(body);
+  async createEvent(
+    @Session() session: { user: { id: string } },
+    @Body() body: CreateEvent,
+  ) {
+    return this.service.create(body, session.user.id);
   }
 
   @Documented(updateEventDoc)

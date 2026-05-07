@@ -3,6 +3,7 @@ import { uuidv7 } from 'uuidv7';
 import { users } from './better-auth/users.table';
 import { timestamps } from './shared/timestamps';
 import { relations } from 'drizzle-orm';
+import { pedidoItens } from './order-items.table';
 
 export const pedidoStatus = pgEnum('pedido_status', [
   'PENDENTE',
@@ -24,9 +25,10 @@ export const pedidos = pgTable('pedidos', (t) => ({
   ...timestamps,
 }));
 
-export const pedidosRelations = relations(pedidos, ({ one }) => ({
+export const pedidosRelations = relations(pedidos, ({ one, many }) => ({
   user: one(users, {
     fields: [pedidos.userId],
     references: [users.id],
   }),
+  itens: many(pedidoItens),
 }));
