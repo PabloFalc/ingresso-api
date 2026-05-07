@@ -16,7 +16,7 @@ export const tipoIngresso = pgTable('tipo_ingresso', (t) => ({
   nome: t.varchar('nome', { length: 150 }).notNull(),
   preco: t.integer('preco').notNull().default(0),
   quantidadeTotal: t.integer('total').notNull(),
-  quantidadeVendida: t.integer('quantidadeVendida').notNull(),
+  quantidadeVendida: t.integer('quantidadeVendida').default(0).notNull(),
   inicioVenda: timestampIso('inicioVenda').notNull(),
   fimVenda: timestampIso('fimVenda').notNull(),
   ativo: t.boolean('ativo').notNull(),

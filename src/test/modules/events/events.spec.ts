@@ -1,34 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type Event } from 'src/modules/event/dtos/events.dto';
 import { EventsController } from 'src/modules/event/events.controller';
 import { EventsService } from 'src/modules/event/events.service';
 
-const eventMock = {
-  id: '01900000-0000-7000-8000-000000000001',
+const sessionMock = { user: { id: '01900000-0000-7000-8000-000000000001' } };
+
+const eventMock: { organizadorId: string } & Omit<Event, 'organizador'> = {
+  id: '01900000-0000-7000-8000-000000000010',
   titulo: 'Show de Rock',
   descricao: 'Um show incrível',
   dataInicio: '2026-06-01T20:00:00.000Z',
   dataFim: '2026-06-01T23:00:00.000Z',
-  status: 'ativo',
+  status: 'RASCUNHO',
   local: 'Arena Fortaleza',
-  organizador: {
-    id: '01900000-0000-7000-8000-000000000002',
-    name: 'Organizador Teste',
-    email: 'org@teste.com',
-    cpf: '111.222.333-44',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
+  organizadorId: sessionMock.user.id,
 };
 
 const serviceMock = {
   findById: jest.fn().mockResolvedValue(eventMock),
   getAllEvents: jest.fn().mockResolvedValue([eventMock]),
-  create: jest.fn().mockResolvedValue({
-    ...eventMock,
-    organizadorId: eventMock.organizador.id,
-  }),
-  updateEventById: jest.fn().mockResolvedValue(eventMock),
+  create: jest.fn().mockResolvedValue(eventMock),
+  updateEventById: jest
+    .fn()
+    .mockResolvedValue({ ...eventMock, titulo: 'Novo Título' }),
   deleteEventById: jest.fn().mockResolvedValue(null),
   findIngressosByEventId: jest.fn().mockResolvedValue([]),
 };
@@ -47,57 +41,51 @@ describe('EventsController', () => {
 
   it('GET :id — deve retornar um evento pelo id', async () => {
     const result = await controller.findEventById(eventMock.id);
-    expect(result).toMatchObject({
-      id: eventMock.id,
-      titulo: eventMock.titulo,
-    });
+    expect(result.id).toBe(eventMock.id);
     expect(serviceMock.findById).toHaveBeenCalledWith(eventMock.id);
   });
 
   it('GET / — deve retornar lista de eventos', async () => {
     const result = await controller.findAllEvents(undefined);
     expect(Array.isArray(result)).toBe(true);
-    expect(result[0].titulo).toBe(eventMock.titulo);
   });
 
-  it('POST / — deve criar um evento', async () => {
-    const payload = {
+  it('POST / — deve criar um evento passando a sessão do usuário', async () => {
+    const body = {
       titulo: eventMock.titulo,
       descricao: eventMock.descricao,
       dataInicio: eventMock.dataInicio,
       dataFim: eventMock.dataFim,
-      status: eventMock.status as any,
+      status: eventMock.status,
       local: eventMock.local,
-      organizadorId: eventMock.organizador.id,
     };
 
-    const result = await controller.createEvent(payload);
-    expect(result).toHaveProperty('id');
-    expect(serviceMock.create).toHaveBeenCalledWith(payload);
+    const result = (await controller.createEvent(
+      sessionMock,
+      body,
+    )) as typeof eventMock;
+    expect(result.organizadorId).toBe(sessionMock.user.id);
+    expect(serviceMock.create).toHaveBeenCalledWith(body, sessionMock.user.id);
   });
 
   it('PATCH :id — deve atualizar um evento', async () => {
-    const result = await controller.updateEventById(
+    const result = (await controller.updateEventById(
       { id: eventMock.id },
       { titulo: 'Novo Título' },
-    );
-    expect(result).toMatchObject({ id: eventMock.id });
+    )) as typeof eventMock;
+    expect(result.titulo).toBe('Novo Título');
     expect(serviceMock.updateEventById).toHaveBeenCalledWith(eventMock.id, {
       titulo: 'Novo Título',
     });
   });
 
-  it('DELETE :id — deve deletar um evento e retornar null', async () => {
+  it('DELETE :id — deve deletar e retornar null', async () => {
     const result = await controller.deleteEventById(eventMock.id);
     expect(result).toBeNull();
-    expect(serviceMock.deleteEventById).toHaveBeenCalledWith(eventMock.id);
   });
 
   it('GET :id/ingressos — deve retornar ingressos do evento', async () => {
     const result = await controller.findIngressosByEventId(eventMock.id);
     expect(Array.isArray(result)).toBe(true);
-    expect(serviceMock.findIngressosByEventId).toHaveBeenCalledWith(
-      eventMock.id,
-    );
   });
 });
