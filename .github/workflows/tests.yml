@@ -3,28 +3,42 @@ name: Tests Job
 on:
   workflow_call:
 
+env:
+  NODE_ENV: test
+  JWT_SECRET: minhachavesecretadePELOMENOS32caracteres
+  COOKIE_SECRET: outrachavesecretadePELOMENOS32caracteres
+  DATABASE_URL: postgresql://docker:docker@localhost:5432/test_db
+  BETTER_AUTH_SECRET: sua-chave-super-secreta-com-pelo-menos-32-caracteres
+  BETTER_AUTH_URL: http://localhost:3100
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
-    env:
-      NODE_ENV: test
-      JWT_SECRET: minhachavesecretadePELOMENOS32caracteres
-      COOKIE_SECRET: outrachavesecretadePELOMENOS32caracteres
-      DATABASE_URL: postgresql://docker:docker@localhost:5432/test_db
-      BETTER_AUTH_SECRET: sua-chave-super-secreta-com-pelo-menos-32-caracteres
-      BETTER_AUTH_URL: http://localhost:3100
-      REDIS_HOST: localhost
-      REDIS_PORT: 6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install
+
+      - run: pnpm lint
+
+  unit-tests:
+    runs-on: ubuntu-latest
 
     services:
       redis:
         image: redis
         ports: ['6379:6379']
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+
       postgres:
         image: postgres:17
         env:
@@ -32,29 +46,51 @@ jobs:
           POSTGRES_PASSWORD: docker
           POSTGRES_DB: test_db
         ports: ['5432:5432']
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'pnpm'
+          cache: pnpm
 
       - run: pnpm install
 
-      - name: Static Analysis (Lint)
-        run: pnpm lint
+      - run: pnpm db:push
 
-      # - name: Type Check (TypeScript)
-      #   run: pnpm typecheck
+      - run: pnpm test
 
-      - name: Database Sync
-        run: pnpm db:push
+  e2e-tests:
+    runs-on: ubuntu-latest
 
-      - name: Unit & Integration Tests
-        run: pnpm test --passWithNoTests #! Sem testes no momento, aplicar depois
+    services:
+      redis:
+        image: redis
+        ports: ['6379:6379']
+
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: docker
+          POSTGRES_PASSWORD: docker
+          POSTGRES_DB: test_db
+        ports: ['5432:5432']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install
+
+      - run: pnpm db:push
+
+      - run: pnpm test:e2e

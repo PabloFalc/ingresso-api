@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, ilike } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, SQL } from 'drizzle-orm';
 import { AppError } from 'src/core/erros/base-app.error';
 import { InternalServerError, NotFoundError } from 'src/core/erros/http.errors';
 import { DrizzleService } from 'src/infra/database/drizzle.service';
@@ -60,7 +60,6 @@ export class UsersService {
       order = 'desc',
       orderBy = 'createdAt',
       name,
-      role,
     } = query ?? {};
 
     const cached = await this.cache.get<UserEntity[]>({
@@ -72,20 +71,23 @@ export class UsersService {
 
     const column = users[orderBy] ?? users.createdAt;
 
+    const filters: SQL[] = [];
+
+    if (name) {
+      filters.push(ilike(users.name, `%${name}%`));
+    }
+
     try {
       const result = await this.db
         .getInstance()
         .select()
         .from(users)
-        .where(
-          and(
-            name ? ilike(users.name, `%${name}%`) : undefined,
-            role ? eq(users.role, role) : undefined,
-          ),
-        )
+        .where(and(filters.length ? and(...filters) : undefined))
         .orderBy(order === 'asc' ? asc(column) : desc(column))
         .limit(limit)
         .offset(offset);
+
+      console.log(result);
 
       await this.cache.set({
         prefix: query,
