@@ -18,11 +18,14 @@ export class EventsService {
     private readonly cache: ICacheClient,
   ) {}
 
-  async create(data: CreateEvent) {
+  async create(data: CreateEvent, userId: string) {
     const db = this.db.getInstance();
 
     try {
-      const [result] = await db.insert(eventos).values(data).returning();
+      const [result] = await db
+        .insert(eventos)
+        .values({ ...data, organizadorId: userId })
+        .returning();
       return result;
     } catch (error: unknown) {
       if (error instanceof DrizzleError || error instanceof DrizzleQueryError) {

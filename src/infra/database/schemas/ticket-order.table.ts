@@ -2,6 +2,7 @@ import { pgTable } from 'drizzle-orm/pg-core';
 import { uuidv7 } from 'uuidv7';
 import { eventos } from './event.table';
 import { relations } from 'drizzle-orm';
+import { timestampIso } from './shared/timestamps';
 
 export const tipoIngresso = pgTable('tipo_ingresso', (t) => ({
   id: t
@@ -16,8 +17,8 @@ export const tipoIngresso = pgTable('tipo_ingresso', (t) => ({
   preco: t.integer('preco').notNull().default(0),
   quantidadeTotal: t.integer('total').notNull(),
   quantidadeVendida: t.integer('quantidadeVendida').notNull(),
-  inicioVenda: t.timestamp('inicioVenda').notNull(),
-  fimVenda: t.timestamp('fimVenda').notNull(),
+  inicioVenda: timestampIso('inicioVenda').notNull(),
+  fimVenda: timestampIso('fimVenda').notNull(),
   ativo: t.boolean('ativo').notNull(),
 }));
 

@@ -15,17 +15,12 @@ export const eventsBaseSchema = z.object({
 
 export const createEventSchema = eventsBaseSchema
   .extend({
-    organizadorId: z.uuidv7(),
     dataInicio: z.iso.datetime(),
     dataFim: z.iso.datetime(),
   })
   .omit({ organizador: true, id: true });
 
-export const updateEventSchema = createEventSchema
-  .omit({
-    organizadorId: true,
-  })
-  .partial();
+export const updateEventSchema = createEventSchema.partial();
 
 export type Event = z.infer<typeof eventsBaseSchema>;
 export type CreateEvent = z.infer<typeof createEventSchema>;
