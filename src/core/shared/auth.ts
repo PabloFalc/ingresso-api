@@ -22,7 +22,7 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      userName: {
+      cpf: {
         required: true,
         unique: true,
         type: 'string',

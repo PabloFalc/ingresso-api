@@ -11,12 +11,15 @@ export const signUpSchema = userBaseSchema
   .omit({
     id: true,
     emailVerified: true,
-    createdAt: true,
     updatedAt: true,
-    deletedAt: true,
+    createdAt: true,
   })
   .extend({
     password: z.string().min(8),
   });
 
 export const signInSchema = signUpSchema.pick({ email: true, password: true });
+
+export type SignUp = z.infer<typeof signUpSchema>;
+export type AuthOutType = z.infer<typeof authOutSchema>;
+export type SignIn = z.infer<typeof signInSchema>;

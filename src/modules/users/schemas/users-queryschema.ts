@@ -1,10 +1,8 @@
-import { userRoleSchema } from 'src/infra/database/schemas';
 import { z } from 'zod';
 
 export const usersQuerySchema = z
   .object({
     name: z.string().min(3).max(150).optional(),
-    role: userRoleSchema.optional(),
 
     limit: z.coerce.number().min(1).max(100).default(10),
     offset: z.coerce.number().min(0).default(0),

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { zodValidationPipe } from './pipes/zod-validation.pipe';
+// import { zodValidationPipe } from './pipes/zod-validation.pipe';
 import { zodSerializerInterceptor } from './interceptors/zod-serializer.interceptor';
 import { rateLimit, throttler } from './guards/rate-limit.guard';
 import { httpExceptionFilter } from './filters/http/http-exception.filter';
@@ -9,7 +9,7 @@ import { betterAuthModule } from './shared/better-auth.module';
 @Module({
   imports: [throttler, configPino, betterAuthModule],
   providers: [
-    zodValidationPipe,
+    // zodValidationPipe,
     zodSerializerInterceptor,
     httpExceptionFilter,
     rateLimit,

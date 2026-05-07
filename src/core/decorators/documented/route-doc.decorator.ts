@@ -5,8 +5,8 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import type { ZodType } from 'zod';
-import { ZodValidationPipe, type ZodDto } from 'nestjs-zod';
+import { type ZodType } from 'zod';
+import { type ZodDto } from 'nestjs-zod';
 import {
   ApiOperation,
   ApiCookieAuth,
@@ -18,6 +18,7 @@ import {
 import { getOrCreateDto } from './helpers/get-create-dto-cache';
 import { ZodResponseInterceptor } from 'src/core/interceptors/zod-response.interceptor';
 import { AuthGuard } from '@thallesp/nestjs-better-auth';
+import { ZodPipe } from 'src/core/pipes/zod-validation.pipe';
 
 export type DocumentedParams = {
   summary?: string;
@@ -39,7 +40,7 @@ function getOpenApiType(dto: ZodDto) {
   return !dto.codec && '_zod' in dto.schema ? dto.Output : dto;
 }
 
-export function Documented(params: DocumentedParams) {
+export function Documented(props: DocumentedParams) {
   const decorators: MethodDecorator[] = [];
 
   const {
@@ -51,7 +52,7 @@ export function Documented(params: DocumentedParams) {
     tags,
     response,
     security,
-  } = params;
+  } = props;
 
   decorators.push(
     ApiOperation({
@@ -63,16 +64,13 @@ export function Documented(params: DocumentedParams) {
 
   if (body) {
     const dto = getOrCreateDto(body);
-    decorators.push(ApiBody({ type: dto }));
+    decorators.push(ApiBody({ type: dto }), UsePipes(new ZodPipe(body)));
   }
 
   if (query) {
     const dto = getOrCreateDto(query);
 
-    decorators.push(
-      ApiQuery({ type: dto }),
-      UsePipes(new ZodValidationPipe(query)),
-    );
+    decorators.push(ApiQuery({ type: dto }), UsePipes(new ZodPipe(query)));
   }
 
   if (security?.cookie) {

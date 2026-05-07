@@ -27,7 +27,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config ./src/test/jest-e2e.json --runInBand",
     "release": "semantic-release"
   },
   "dependencies": {
@@ -103,13 +103,33 @@
     "moduleFileExtensions": [
       "js",
       "json",
-      "ts"
+      "ts",
+      "mjs"
     ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1",
+      "^@thallesp/nestjs-better-auth$": "<rootDir>/../test/__mocks__/@thallesp/nestjs-better-auth.ts"
+    },
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t|j|mj)s$": [
+        "ts-jest",
+        {
+          "tsconfig": {
+            "allowJs": true,
+            "esModuleInterop": true
+          }
+        }
+      ]
     },
+    "transformIgnorePatterns": [
+      "node_modules\\.pnpm(?!.*better-auth)"
+    ],
+    "testPathIgnorePatterns": [
+      "\\.e2e-spec\\.ts$",
+      "-e2e\\.spec\\.ts$"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
