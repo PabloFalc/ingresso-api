@@ -11,9 +11,8 @@ export const signUpSchema = userBaseSchema
   .omit({
     id: true,
     emailVerified: true,
-    createdAt: true,
     updatedAt: true,
-    deletedAt: true,
+    createdAt: true,
   })
   .extend({
     password: z.string().min(8),

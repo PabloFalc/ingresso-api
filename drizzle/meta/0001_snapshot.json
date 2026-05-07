@@ -1,6 +1,6 @@
 {
-  "id": "c959fcbf-46e5-4d10-859c-d282852ad85e",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "d034ad0a-6552-4653-844e-564079e9523c",
+  "prevId": "c959fcbf-46e5-4d10-859c-d282852ad85e",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -624,7 +624,7 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
@@ -682,13 +682,13 @@
         },
         "data_inicio": {
           "name": "data_inicio",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "data_fim": {
           "name": "data_fim",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },
@@ -714,7 +714,7 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"

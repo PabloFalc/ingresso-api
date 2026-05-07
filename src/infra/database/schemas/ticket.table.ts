@@ -1,0 +1,51 @@
+import { pgTable } from 'drizzle-orm/pg-core';
+import { uuidv7 } from 'uuidv7';
+import { pedidos } from './order.table';
+import { eventos } from './event.table';
+import { users } from './better-auth/users.table';
+import { pgEnum } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+
+export const ingressoStatus = pgEnum('ingresso_status', [
+  'VALIDO',
+  'USADO',
+  'CANCELADO',
+]);
+
+export const ingressos = pgTable('ingressos', (t) => ({
+  id: t
+    .text('id')
+    .$defaultFn(() => uuidv7())
+    .primaryKey(),
+  pedidoId: t
+    .text('pedidoId')
+    .references(() => pedidos.id)
+    .notNull(),
+  eventoId: t
+    .text('eventoId')
+    .references(() => eventos.id)
+    .notNull(),
+  userId: t
+    .text('userId')
+    .references(() => users.id)
+    .notNull(),
+  status: ingressoStatus('status').default('VALIDO').notNull(),
+  criadoEm: t.timestamp('criadoEm').notNull().defaultNow(),
+}));
+
+export const ticketRelations = relations(ingressos, ({ one }) => ({
+  pedido: one(pedidos, {
+    fields: [ingressos.pedidoId],
+    references: [pedidos.id],
+  }),
+
+  event: one(eventos, {
+    fields: [ingressos.eventoId],
+    references: [eventos.id],
+  }),
+
+  user: one(users, {
+    fields: [ingressos.userId],
+    references: [users.id],
+  }),
+}));
