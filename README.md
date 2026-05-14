@@ -32,12 +32,22 @@ pnpm docker:init
 
 ```bash
 pnpm db:migrate
+ou
+pnpm db:push
 ```
 
 5. Rode a aplicacao em modo desenvolvimento:
 
 ```bash
 pnpm start:dev
+```
+
+6. Comando de teste:
+
+```bash
+pnpm test
+
+pnpm test:2e2
 ```
 
 Para parar os containers:

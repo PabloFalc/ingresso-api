@@ -8,7 +8,6 @@ import {
 } from './seed.helpers';
 
 const MAX_REGISTROS = 100;
-const EVENTOS_TOTAL = 20;
 
 const USUARIO_SEED = {
   name: 'seed',
@@ -38,6 +37,131 @@ const TIPOS_BASE = [
   },
 ] as const;
 
+const EVENTOS_MOCK = [
+  {
+    titulo: 'Deftones - White Pony Night',
+    descricao:
+      'Show mock de nu metal e shoegaze pesado inspirado na fase White Pony.',
+    local: 'Arena Diamond Eyes',
+  },
+  {
+    titulo: 'Slipknot - Iowa Masked Fest',
+    descricao:
+      'Festival mock com palco pesado, mascaras, riffs secos e energia caotica.',
+    local: 'Galpao Nine',
+  },
+  {
+    titulo: 'Kendrick Lamar - DAMN. Live Experience',
+    descricao:
+      'Experiencia mock de rap com set conceitual, luz baixa e narrativa de palco.',
+    local: 'Teatro Compton',
+  },
+  {
+    titulo: 'Travis Scott - Utopia Arena',
+    descricao:
+      'Show mock de hip-hop com atmosfera futurista, graves fortes e palco imersivo.',
+    local: 'Arena Utopia',
+  },
+  {
+    titulo: 'Kanye West - Graduation Listening Party',
+    descricao:
+      'Evento mock inspirado em rap, samples, sintetizadores e clima de listening party.',
+    local: 'Dome Graduation',
+  },
+  {
+    titulo: 'Linkin Park - Hybrid Theory Tribute',
+    descricao:
+      'Tributo mock de nu metal com rap rock, guitarras abertas e refracoes de arena.',
+    local: 'Espaco Meteora',
+  },
+  {
+    titulo: 'Korn - Follow the Leader Night',
+    descricao:
+      'Noite mock dedicada ao groove pesado, baixo estalado e classicos do nu metal.',
+    local: 'Subsolo Bakersfield',
+  },
+  {
+    titulo: 'Limp Bizkit - Break Stuff Sessions',
+    descricao:
+      'Evento mock de rap metal com riffs explosivos e energia de pista lotada.',
+    local: 'Warehouse Chocolate Starfish',
+  },
+  {
+    titulo: 'System of a Down - Toxicity Stage',
+    descricao:
+      'Show mock com metal alternativo, viradas quebradas e coro alto do publico.',
+    local: 'Arena Toxicity',
+  },
+  {
+    titulo: 'BTS - Seoul Pop Lights',
+    descricao:
+      'Evento mock de kpop com coreografias, lightsticks e producao de grande arena.',
+    local: 'Seoul Light Hall',
+  },
+  {
+    titulo: 'BLACKPINK - Pink Venom Party',
+    descricao:
+      'Festa mock de kpop com pop explosivo, performance visual e pista premium.',
+    local: 'Pink Stage',
+  },
+  {
+    titulo: 'NewJeans - Super Shy Club',
+    descricao:
+      'Club night mock de kpop com dance pop leve, visual Y2K e clima de festival.',
+    local: 'Club Hype Boy',
+  },
+  {
+    titulo: 'aespa - Cyber K-pop Night',
+    descricao:
+      'Evento mock com estetica cyber, kpop eletronico e palco cheio de LEDs.',
+    local: 'KWANGYA Hall',
+  },
+  {
+    titulo: 'Stray Kids - Thunderous Showcase',
+    descricao:
+      'Showcase mock de kpop com rap rapido, coreografia forte e beats agressivos.',
+    local: 'District 9 Arena',
+  },
+  {
+    titulo: 'Nas - Illmatic Rooftop',
+    descricao:
+      'Noite mock de hip-hop classico com boom bap, DJ set e clima de rooftop.',
+    local: 'Queens Rooftop',
+  },
+  {
+    titulo: 'Wu-Tang Clan - Shaolin Rap Night',
+    descricao:
+      'Evento mock de rap coletivo com beats sujos, samples soul e cypher no palco.',
+    local: 'Shaolin Temple Stage',
+  },
+  {
+    titulo: 'Snoop Dogg - West Coast Vibes',
+    descricao:
+      'Show mock de hip-hop west coast com groove calmo, baixo quente e pista aberta.',
+    local: 'Long Beach Park',
+  },
+  {
+    titulo: 'Tyler, The Creator - Camp Flog Mock',
+    descricao:
+      'Festival mock colorido de rap alternativo, soul torto e cenografia criativa.',
+    local: 'Flower Boy Garden',
+  },
+  {
+    titulo: 'Eminem & 50 Cent - Aftermath Night',
+    descricao:
+      'Evento mock de rap com hits de arena, punchlines e clima de mixtape classica.',
+    local: 'Shady Hall',
+  },
+  {
+    titulo: 'Bring Me The Horizon - Post Human Stage',
+    descricao:
+      'Show mock misturando metal moderno, eletronico, rap e refracoes gigantes.',
+    local: 'Nex Gen Arena',
+  },
+] as const;
+
+const EVENTOS_TOTAL = EVENTOS_MOCK.length;
+
 function addDays(date: Date, days: number) {
   const copy = new Date(date);
   copy.setDate(copy.getDate() + days);
@@ -61,15 +185,15 @@ function criarEventoSeed(
   const now = new Date();
   const dataInicio = addDays(now, 20 + index * 2);
   const dataFim = addHours(dataInicio, 4 + (index % 3));
-  const numero = String(index + 1).padStart(2, '0');
+  const eventoMock = EVENTOS_MOCK[index];
 
   return {
-    titulo: `Evento Seed ${numero}`,
-    descricao: `Evento gerado pelo script de seed para testes e desenvolvimento. Lote ${numero}.`,
+    titulo: eventoMock.titulo,
+    descricao: eventoMock.descricao,
     dataInicio: iso(dataInicio),
     dataFim: iso(dataFim),
     status: 'PUBLICADO',
-    local: `Espaco Seed ${numero}`,
+    local: eventoMock.local,
     organizadorId,
   };
 }
