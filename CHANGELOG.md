@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/PabloFalc/ingresso-api/compare/v1.1.0...v1.2.0) (2026-05-14)
+
+### 🚀 Features
+
+* **seed:** seed de eventos e tickets criados ([56ac5ba](https://github.com/PabloFalc/ingresso-api/commit/56ac5babe7865a4ed16a70bdcaeb778443f4fd5f))
+
 ## [1.1.0](https://github.com/PabloFalc/ingresso-api/compare/v1.0.0...v1.1.0) (2026-05-07)
 
 ### 🚀 Features

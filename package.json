@@ -1,6 +1,6 @@
 {
   "name": "ingresse-api",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "api de venda de ingressos",
   "author": "Pablo Falc",
   "private": true,
