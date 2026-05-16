@@ -1,3 +1,13 @@
+## [1.3.0](https://github.com/PabloFalc/ingresso-api/compare/v1.2.0...v1.3.0) (2026-05-16)
+
+### 🚀 Features
+
+* **users/tickets:** rota para pegar os tickets do usuário implementado ([1e011fb](https://github.com/PabloFalc/ingresso-api/commit/1e011fbcb2942b922fbab91e4637768f3634587d))
+
+### ♻️ Refactoring
+
+* **seed:** seed foi mudado para ter nomes mais descritivos para a apresentação ([f52b89a](https://github.com/PabloFalc/ingresso-api/commit/f52b89aae26e7f79569ac1debd2ef2a8e5966f74))
+
 ## [1.2.0](https://github.com/PabloFalc/ingresso-api/compare/v1.1.0...v1.2.0) (2026-05-14)
 
 ### 🚀 Features
