@@ -35,6 +35,8 @@ export const ingressos = pgTable('ingressos', (t) => ({
     .default(new Date().toISOString()),
 }));
 
+export type TicketEntity = typeof ingressos.$inferSelect;
+
 export const ticketRelations = relations(ingressos, ({ one }) => ({
   pedido: one(pedidos, {
     fields: [ingressos.pedidoId],

@@ -105,10 +105,10 @@ const EVENTOS_MOCK = [
     local: 'Pink Stage',
   },
   {
-    titulo: 'NewJeans - Super Shy Club',
+    titulo: 'Michael Jackson return',
     descricao:
-      'Club night mock de kpop com dance pop leve, visual Y2K e clima de festival.',
-    local: 'Club Hype Boy',
+      'Isso mesmo, cara "voltou" dos mortos para fazer um show no infeno que se chama TERESINA',
+    local: 'Teresina - Aculá',
   },
   {
     titulo: 'aespa - Cyber K-pop Night',

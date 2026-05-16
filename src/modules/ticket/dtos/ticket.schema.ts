@@ -1,4 +1,5 @@
 import { ingressoStatus } from 'src/infra/database/schemas';
+
 import z from 'zod';
 
 export const ticketBaseSchema = z.object({

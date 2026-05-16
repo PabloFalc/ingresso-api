@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  Session,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { UsersQuery } from './schemas/users-queryschema';
 import type { UserUpdate } from './dto/uses.dto';
@@ -6,6 +14,7 @@ import { Documented } from 'src/core/decorators/documented/route-doc.decorator';
 import {
   findAllUsers,
   findUserById,
+  findUsersTickets,
   updateUserById,
 } from './schemas/users.docs';
 
@@ -23,6 +32,12 @@ export class UsersController {
   @Get()
   async findAll(@Query() query: UsersQuery) {
     return await this.service.findAll(query);
+  }
+
+  @Documented(findUsersTickets)
+  @Get('/tickets')
+  async findUsersTickets(@Session() session: { user: { id: string } }) {
+    return this.service.findUsersTickets(session.user.id);
   }
 
   @Documented(updateUserById)

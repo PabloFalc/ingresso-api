@@ -3,6 +3,7 @@ import { userBaseSchema, userUpdateSchema } from '../dto/uses.dto';
 import { httpReplySchema } from 'src/core/filters/http/http-reply.schema';
 import z from 'zod';
 import { usersQuerySchema } from './users-queryschema';
+import { ticketBaseSchema } from 'src/modules/ticket/dtos/ticket.schema';
 
 export const findUserById: DocumentedParams = {
   summary: 'FindByid',
@@ -14,6 +15,19 @@ export const findUserById: DocumentedParams = {
   response: {
     200: userBaseSchema,
     404: httpReplySchema,
+  },
+};
+
+export const findUsersTickets: DocumentedParams = {
+  summary: 'Find Users Tickets',
+  statusCode: 200,
+  description: 'Encontra os tickets de um usuário',
+  security: {
+    cookie: true,
+  },
+  response: {
+    200: z.array(ticketBaseSchema),
+    500: httpReplySchema,
   },
 };
 

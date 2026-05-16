@@ -3,11 +3,12 @@ import { and, asc, desc, eq, ilike, SQL } from 'drizzle-orm';
 import { AppError } from 'src/core/erros/base-app.error';
 import { InternalServerError, NotFoundError } from 'src/core/erros/http.errors';
 import { DrizzleService } from 'src/infra/database/drizzle.service';
-import { UserEntity, users } from 'src/infra/database/schemas';
+import { ingressos, UserEntity, users } from 'src/infra/database/schemas';
 import { UsersQuery } from './schemas/users-queryschema';
 import { DrizzleQueryError } from 'drizzle-orm';
 import { UserUpdate } from './dto/uses.dto';
 import { ICacheClient } from 'src/infra/cache/cache-client.interface';
+import { DrizzleError } from 'drizzle-orm';
 
 @Injectable()
 export class UsersService {
@@ -102,6 +103,24 @@ export class UsersService {
         throw new InternalServerError({ message: 'Erro durante busca' });
       }
       throw error;
+    }
+  }
+
+  async findUsersTickets(id: string) {
+    try {
+      const result = await this.db
+        .getInstance()
+        .select()
+        .from(ingressos)
+        .where(eq(ingressos.userId, id));
+
+      return result;
+    } catch (error: unknown) {
+      if (error instanceof DrizzleQueryError || error instanceof DrizzleError) {
+        throw new InternalServerError({ details: error.cause });
+      }
+
+      throw new InternalServerError({ details: error });
     }
   }
 
