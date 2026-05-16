@@ -36,6 +36,12 @@ ou
 pnpm db:push
 ```
 
+6. Fazer seed do banco de dados:
+
+```bash
+pnpm db:seed
+```
+
 5. Rode a aplicacao em modo desenvolvimento:
 
 ```bash
