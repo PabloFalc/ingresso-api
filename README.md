@@ -16,11 +16,7 @@
 pnpm install
 ```
 
-2. Copie o arquivo de ambiente e ajuste os valores:
-
-```bash
-cp .env.example .env
-```
+2. Copie as informações .env.example e cole no .env
 
 3. Suba os containers:
 
@@ -32,8 +28,17 @@ pnpm docker:init
 
 ```bash
 pnpm db:migrate
-ou
+```
+
+- Caso migrate não funcione utilize
+``` bash
 pnpm db:push
+```
+
+- Em ultimo caso, apague as migrations e rode o comando:
+```bash
+pnpm db:generate
+pnpm db:migrate ou pnpm db:push
 ```
 
 6. Fazer seed do banco de dados:
